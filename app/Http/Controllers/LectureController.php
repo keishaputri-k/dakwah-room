@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Lecture;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LectureController extends Controller
 {
+    public function readLectureAll(){
+        return Lecture::all();
+    }
     public function readLecture($id){
         return Lecture::findOrFail($id);
     }
@@ -27,16 +31,22 @@ class LectureController extends Controller
             $lecture->city = $data['city']; 
             $lecture->quota = $data['quota'];
             $lecture->poster_photo_path = $data['poster_photo_path'];
+            $lecture->form_link = $data['form_link'];
             $lecture->group_link = $data['group_link'];
             $lecture->orginizer_name = $data['orginizer_name'];
-            $lecture->profile_orginizer_path = $data['profile_orginizer_path'];
+    
 
-            //test upload photo
-            // if(isset($lecture -> profile_photo_path)){
-            //     Storage::disk('public') -> delete($lecture -> profile_photo_path);
-            // }
-            // $filePath = $request -> file('photo') -> store('images/user/', 'public');
-            // $lecture -> profile_photo_path = $filePath;
+            //jika ada file sebelumnya maka hapus dulu
+            if($image = $request ->file('image')){
+                foreach($request->fileName as $mediaFiles) {
+                    $path = $mediaFiles->store('public/images');
+                    $poster_photo_path = date('YmdHi') . "." . $image -> getClientOriginalExtension();
+                    $request->file('poster_photo_path')->move(public_path($path), $poster_photo_path);
+                    $data['image'] = "$poster_photo_path";
+                    $lecture->path = $path;
+                }
+            }
+
 
             $lecture->save();
             $status = "success";
@@ -44,6 +54,7 @@ class LectureController extends Controller
         }catch(\Throwable $th){
             $status = 'failed';
             return response()->json(compact('status', 'th'),401);
+
         }
     }
     public function deleteLecture($id){

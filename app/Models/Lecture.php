@@ -22,9 +22,9 @@ class Lecture extends Model
         'city',
         'quota',
         'poster_photo_path',
+        'form_link',
         'group_link',
         'orginizer_name',
-        'profile_orginizer_path'
     ];
 
     protected $casts =[

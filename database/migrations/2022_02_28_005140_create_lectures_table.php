@@ -27,9 +27,9 @@ class CreateLecturesTable extends Migration
             $table->string('city');
             $table->integer('quota');
             $table->string('poster_photo_path', 2048)->nullable();
+            $table->string('form_link');
             $table->string('group_link');
             $table->string('orginizer_name');
-            $table->string('profile_orginizer_path', 2048)->nullable();
             $table->timestamps();
         });
     }
